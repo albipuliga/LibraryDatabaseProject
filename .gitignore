@@ -1,0 +1,25 @@
+*.pdf
+myenv/
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local development settings
+settings.py
+local_settings.py
+
+# Database
+db.mysql
+
+# Static files
+/static/
+
+# Media files
+/media/
+
+.DS_Store
+
+
