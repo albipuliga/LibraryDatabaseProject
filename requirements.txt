@@ -3,3 +3,5 @@ djongo
 beautifulsoup4
 mysqlclient
 sqlalchemy
+requests
+mysql-connector
