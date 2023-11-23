@@ -1,3 +1,4 @@
+pandas
 django
 djongo
 beautifulsoup4
