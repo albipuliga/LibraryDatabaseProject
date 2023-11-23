@@ -18,7 +18,6 @@ class Book(models.Model):
     isbn = models.CharField(max_length=255, default="")
     publishers = models.CharField(max_length=255, default="")
     number_of_pages = models.IntegerField(default=0)
-    languages = models.CharField(max_length=255, default="")
 
     # class Meta:
     #     # Set the database alias to 'mongodb'
