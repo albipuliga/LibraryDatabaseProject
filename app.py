@@ -9,109 +9,59 @@ django.setup()
 from dbs_app.models import Book, Author
 
 # Streamlit app
-st.title("Library Database")
+st.markdown("# Library Database :books:")
+st.markdown("### Search for books, authors, and publishers in our database.")
 
 
 # Function to search books
-def search_books(query):
-    books = Book.objects.filter(title__icontains=query)
-    return books
-
-
-def search_isbn(query):
-    isbn = Book.objects.filter(isbn__icontains=query)
-    return isbn
-
-
-def search_authors(query):
-    authors = Author.objects.filter(name__icontains=query)
-    return authors
-
-
-def search_author_by_key(query):
-    author_by_key = Author.objects.filter(key__icontains=query)
-    return author_by_key
-
-
-def search_publishers(query):
-    publishers = Book.objects.filter(publishers__icontains=query)
-    return publishers
+def search_books(field, query):
+    if field == "Title":
+        return (
+            Book.objects.filter(title__icontains=query) if query else Book.objects.all()
+        )
+    elif field == "Author":
+        if query:
+            authors = Author.objects.filter(name__icontains=query)
+            return Book.objects.filter(author__in=authors)
+        else:
+            return Book.objects.all()
+    elif field == "Publisher":
+        return (
+            Book.objects.filter(publishers__icontains=query)
+            if query
+            else Book.objects.all()
+        )
+    elif field == "ISBN":
+        return (
+            Book.objects.filter(isbn__icontains=query) if query else Book.objects.all()
+        )
 
 
 # User input
-search_query = st.text_input("Enter a book title, author name, or publisher to search:")
+search_option = st.selectbox(
+    "Select search type:", ["Title", "Author", "Publisher", "ISBN"]
+)
+search_query = st.text_input("Enter search query:")
+
+# Pagination
+PAGE_SIZE = 10
+page_number = st.number_input("Page number", min_value=1, value=1)
+start_index = (page_number - 1) * PAGE_SIZE
+end_index = start_index + PAGE_SIZE
 
 # Button to perform search
 if st.button("Search"):
-    if search_query:
-        # Perform search
-        result_books = search_books(search_query)
-        result_isbn = search_isbn(search_query)
-        result_authors = search_authors(search_query)
-        result_author_by_key = search_author_by_key(search_query)
-        result_publishers = search_publishers(search_query)
+    # Perform search
+    results = search_books(search_option, search_query)[start_index:end_index]
 
-        # Display results
-        if result_books.exists():
-            for book in result_books:
-                st.write(f"TITLE: {book.title}")
-                st.write(f"AUTHOR: {book.author.name}")
-                st.write(f"PUBLISHER: {book.publishers}")
-                st.write(f"NUMBER OF PAGES: {book.number_of_pages}")
-                st.write(f"ISBN: {book.isbn}")
-                st.write("---")
-        elif result_authors.exists():
-            for author in result_authors:
-                st.write(f"KEY: {author.key}")
-                st.write("Books written by this author:")
-                st.write("---")
-                # Display books written by the author
-                books_by_author = Book.objects.filter(author=author)
-                if books_by_author.exists():
-                    for book in books_by_author:
-                        st.write(f"TITLE: {book.title}")
-                        st.write(f"PUBLISHER: {book.publishers}")
-                        st.write(f"NUMBER OF PAGES: {book.number_of_pages}")
-                        st.write(f"ISBN: {book.isbn}")
-                        st.write("---")
-                else:
-                    st.write("No books found for this author.")
-        elif result_author_by_key.exists():
-            for author in result_author_by_key:
-                st.write(f"NAME: {author.name}")
-                st.write("Books written by this author:")
-                st.write("---")
-                # Display books written by the author
-                books_by_author = Book.objects.filter(author=author)
-                if books_by_author.exists():
-                    for book in books_by_author:
-                        st.write(f"TITLE: {book.title}")
-                        st.write(f"PUBLISHER: {book.publishers}")
-                        st.write(f"NUMBER OF PAGES: {book.number_of_pages}")
-                        st.write(f"ISBN: {book.isbn}")
-                        st.write("---")
-                else:
-                    st.write("No books found for this author.")
-        elif result_publishers.exists():
-            for publisher in result_publishers:
-                st.write(f"TITLE: {publisher.title}")
-                st.write(f"AUTHOR: {publisher.author.name}")
-                st.write(f"PUBLISHER: {publisher.publishers}")
-                st.write(f"NUMBER OF PAGES: {publisher.number_of_pages}")
-                st.write(f"ISBN: {publisher.isbn}")
-                st.write("---")
-        elif result_isbn.exists():
-            for isbn in result_isbn:
-                st.write(f"TITLE: {isbn.title}")
-                st.write(f"AUTHOR: {isbn.author.name}")
-                st.write(f"PUBLISHER: {isbn.publishers}")
-                st.write(f"NUMBER OF PAGES: {isbn.number_of_pages}")
-                st.write(f"ISBN: {isbn.isbn}")
-                st.write("---")
-                
-        else:
-            st.write(
-                "No books, authors, or publishers found with that title, name, or publisher."
-            )
+    # Display results
+    if results.exists():
+        for book in results:
+            st.markdown(f"<h3>Title: {book.title}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3>Author: {book.author.name}</h3>", unsafe_allow_html=True)
+            st.markdown(f"**Publisher:** {book.publishers}")
+            st.markdown(f"**ISBN:** {book.isbn}")
+            st.markdown(f"**Number of Pages:** {book.number_of_pages}")
+            st.markdown("---")
     else:
-        st.write("Please enter a title, name, or publisher to search.")
+        st.markdown(f"**No results found for** *'{search_query}'*")
