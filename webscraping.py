@@ -1,6 +1,5 @@
 import os
 import pprint
-from datetime import datetime
 
 import django
 import pandas as pd
@@ -30,7 +29,7 @@ def get_book_details_by_isbn(isbn_list):
 
         if response.status_code == 200:
             book_data = response.json().get(f"ISBN:{isbn}", {})
-            pprint.pprint(book_data)
+            # pprint.pprint(book_data)
 
             title = book_data.get("title")
             authors = book_data.get("authors", [])
