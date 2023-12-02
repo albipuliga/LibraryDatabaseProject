@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
 
 def scrape_books(url):
     response = requests.get(url)
@@ -15,7 +16,7 @@ def scrape_books(url):
     for book_elem in soup.find_all('tr', itemtype='http://schema.org/Book'):
         # Extracting book details
         title_elem = book_elem.find('a', class_='bookTitle')
-        author_elem = book_elem.find('span', itemprop='name')
+        author_elem = book_elem.find('span', itemprop='author')
         rating_elem = book_elem.find('span', class_='minirating')
         ratings_count_elem = book_elem.find('span', class_='smallText uitext')
         published_elem = book_elem.find('div', class_='greyText smallText')
@@ -40,17 +41,26 @@ def scrape_books(url):
 
     return books
 
-# Replace 'https://www.goodreads.com/search?page=99&q=books&qid=I5rZPmqzTS&tab=books' 
-# with the actual URL of the search page you want to scrape.
-url_to_scrape = 'https://www.goodreads.com/search?page=99&q=books&qid=I5rZPmqzTS&tab=books'
-scraped_books = scrape_books(url_to_scrape)
+def print_scraped_books(scraped_books):
+    for book in scraped_books:
+        print("Book Information:")
+        print(f"Title: {book['title']}")
+        print(f"Author: {book['author']}")
+        print(f"Average Rating: {book['average_rating']}")
+        print(f"Ratings Count: {book['ratings_count']}")
+        print(f"Published Year: {book['published_year']}")
+        print(f"Description: {book['description']}")
+        print("---")
 
-for book in scraped_books:
-    print("Book Information:")
-    print(f"Title: {book['title']}")
-    print(f"Author: {book['author']}")
-    print(f"Average Rating: {book['average_rating']}")
-    print(f"Ratings Count: {book['ratings_count']}")
-    print(f"Published Year: {book['published_year']}")
-    print(f"Description: {book['description']}")
-    print("---")
+def main():
+    # Replace 'https://www.goodreads.com/search?page=99&q=books&qid=I5rZPmqzTS&tab=books' 
+    # with the actual URL of the search page you want to scrape.
+    url_to_scrape = 'https://www.goodreads.com/search?page=99&q=books&qid=I5rZPmqzTS&tab=books'
+    
+    # get the data without selenium
+    scraped_books = scrape_books(url_to_scrape)
+    
+    # print info in terminal
+    print_scraped_books(scraped_books)
+
+main()
