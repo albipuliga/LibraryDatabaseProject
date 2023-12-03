@@ -31,45 +31,48 @@ def get_book_details_by_isbn(isbn_list: list[str]) -> None:
     Then, create or update the book in your database.'''
     for isbn in isbn_list:
         url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
-        # Get request to Open Library API
-        response = requests.get(url)
+        try:
+            # Get request to Open Library API
+            response = requests.get(url)
 
-        # Check if the request was successful
-        if response.status_code == 200:
-            # Extract the book data from the response
-            book_data = response.json().get(f"ISBN:{isbn}", {})
+            # Check if the request was successful
+            if response.status_code == 200:
+                # Extract the book data from the response
+                book_data = response.json().get(f"ISBN:{isbn}", {})
 
-            title = book_data.get("title")
-            authors = book_data.get("authors", [])
-            publishers = book_data.get("publishers", [])
-            number_of_pages = book_data.get("number_of_pages")
+                title = book_data.get("title")
+                authors = book_data.get("authors", [])
+                publishers = book_data.get("publishers", [])
+                number_of_pages = book_data.get("number_of_pages")
 
-            if title and authors:
-                # Create or update the author in your database
-                author_name, key = (
-                    authors[0].get("name"),
-                    (authors[0].get("url")).split("/")[-2] or "",
-                )  # Assuming the first author
-                author, created = Author.objects.get_or_create(
-                    name=author_name, key=key
-                )
-                # Create or update the book in your database
-                book, created = Book.objects.update_or_create(
-                    title=title,
-                    defaults={
-                        "author": author,
-                        "isbn": isbn,
-                        "publishers": ", ".join(p.get("name", "") for p in publishers),
-                        "number_of_pages": number_of_pages or 0,
-                    },
-                )
-                print(f'{"Created" if created else "Updated"}: {book.title}')
+                if title and authors:
+                    # Create or update the author in your database
+                    author_name, key = (
+                        authors[0].get("name"),
+                        (authors[0].get("url")).split("/")[-2] or "",
+                    )  # Assuming the first author
+                    author, created = Author.objects.get_or_create(
+                        name=author_name, key=key
+                    )
+                    # Create or update the book in your database
+                    book, created = Book.objects.update_or_create(
+                        title=title,
+                        defaults={
+                            "author": author,
+                            "isbn": isbn,
+                            "publishers": ", ".join(p.get("name", "") for p in publishers),
+                            "number_of_pages": number_of_pages or 0,
+                        },
+                    )
+                    print(f'{"Created" if created else "Updated"}: {book.title}')
+                else:
+                    print(f"No detailed information found for ISBN {isbn}")
             else:
-                print(f"No detailed information found for ISBN {isbn}")
-        else:
-            print(
-                f"Failed to retrieve data for ISBN {isbn}. Status code: {response.status_code}"
-            )
+                print(
+                    f"Failed to retrieve data for ISBN {isbn}. Status code: {response.status_code}"
+                )
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred while making the API call for ISBN {isbn}: {e}")
 
 
 isbn_list = get_isbn_list("books.csv")
