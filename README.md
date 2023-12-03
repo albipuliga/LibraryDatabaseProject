@@ -94,4 +94,4 @@ Ensure you have the following installed:
 
 ## Contact
 
-For any queries or feedback, feel free to contact [Project Maintainer](mailto:@apuliga.ieu2022@student.ie.edu).
+For any queries or feedback, feel free to contact [Project Maintainer](mailto:apuliga.ieu2022@student.ie.edu).
