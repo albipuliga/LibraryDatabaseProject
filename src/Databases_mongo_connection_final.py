@@ -2,7 +2,6 @@ import re
 import json
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
 from pymongo import MongoClient
 
 # algorithm
@@ -17,8 +16,6 @@ from pymongo import MongoClient
 #   get the data available there and store it (book b)
 
 
-def enter_url_withselenium(url, driver):
-    driver.get(url)
 
 
 def scrape_paragraph(url):
@@ -130,52 +127,3 @@ def main():
 main()
 
 
-"""
-def save_to_mongodb(scraped_books):
-    # Connect to MongoDB (Make sure MongoDB is running on your machine)
-    client = MongoClient("mongodb://localhost:27017")
-    
-    # Create or connect to a database (replace 'books_database' with your desired database name)
-    db = client["books_database"]
-
-    # Create or connect to a collection (replace 'books_collection' with your desired collection name)
-    collection = db["books_collection"]
-
-    # Insert the scraped data into MongoDB
-    collection.insert_many(scraped_books)
-
-    # Close the MongoDB connection
-    client.close()
-
-    print("Data saved to MongoDB successfully.")
-
-def main():
-    mainURL = "https://www.goodreads.com/search?page=99&q=books&qid=I5rZPmqzTS&tab=books"
-    
-    scraped_books = scrape_books(mainURL)
-
-    # Save data to MongoDB
-    save_to_mongodb(scraped_books)
-"""
-"""
-def save_data(scraped_books):
-    print(f"{scraped_books}")
-
-    # save above as data.txt
-    filepath = "scrappedData/unstructData.txt"
-    # Open the file in write mode ('w')
-    with open(filepath, "w", encoding="utf-8") as file:
-        # Write the data to the file
-        file.write(str(scraped_books))
-
-    # saving the things as .json
-    json_filepath = "scrappedData/unstructData.json"
-    # Open the file in write mode ('w')
-    with open(json_filepath, "w", encoding="utf-8") as json_file:
-        # Use json.dump() to save the data as JSON
-        json.dump(scraped_books, json_file, indent=2)
-
-    print(
-        f"\n\nThe messy content above was saved as 'data.txt'\nAnd the dict-like data as 'data.json'.\n"
-    )
-"""
