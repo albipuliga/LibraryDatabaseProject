@@ -14,7 +14,7 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=255, default="")
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE) # One-to-many relationship (An author can have many books, but a book can only have one author)
     isbn = models.CharField(max_length=255, default="")
     publishers = models.CharField(max_length=255, default="")
     number_of_pages = models.IntegerField(default=0)

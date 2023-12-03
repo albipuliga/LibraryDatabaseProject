@@ -10,7 +10,8 @@ django.setup()
 from dbs_app.models import Author, Book
 
 
-def get_isbn_list(file_path):
+def get_isbn_list(file_path: str) -> list[str]:
+    '''Read the CSV file (the ISBN column specifically) and return a list of ISBNs that will then be used for API calls to Open Library.'''
     # Read the CSV file
     df = pd.read_csv(file_path)
 
@@ -20,12 +21,22 @@ def get_isbn_list(file_path):
     return isbn_list
 
 
-def get_book_details_by_isbn(isbn_list):
+def get_book_details_by_isbn(isbn_list: list[str]) -> None:
+    '''
+    For each ISBN in the list, make an API call to Open Library to retrieve the book details: 
+        - title
+        - author
+        - publisher
+        - number of pages
+    Then, create or update the book in your database.'''
     for isbn in isbn_list:
         url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
+        # Get request to Open Library API
         response = requests.get(url)
 
+        # Check if the request was successful
         if response.status_code == 200:
+            # Extract the book data from the response
             book_data = response.json().get(f"ISBN:{isbn}", {})
 
             title = book_data.get("title")
