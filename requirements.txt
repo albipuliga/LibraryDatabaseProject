@@ -2,7 +2,8 @@ pandas
 django
 djongo
 beautifulsoup4
+selenium
+mysql-connector
 mysqlclient
 sqlalchemy
 requests
-mysql-connector
