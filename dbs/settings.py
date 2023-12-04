@@ -83,11 +83,13 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": "3306",
     },
-    "mongo": {
+    "mongodb": {
         "ENGINE": "djongo",
-        "NAME": "Library",
+        "NAME": "library_database",
     },
 }
+
+DATABASE_ROUTERS = ["dbs_app.routers.MongoDBRouter"]
 
 
 # Password validation
