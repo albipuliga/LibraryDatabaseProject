@@ -50,7 +50,7 @@ class MongoBook(models.Model):
     class Meta:
         # Set the database alias to 'mongodb'
         app_label = "dbs_app"
-        db_table = "library_databaseCollection"
+        db_table = "library_database_collection"
 
     def __str__(self):
         return self.title
