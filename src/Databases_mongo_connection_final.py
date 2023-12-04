@@ -98,7 +98,7 @@ def scrape_books(url):
     return books
 
 
-def connect_to_mongo( dicdata):
+def connect_to_mongo(dicdata):
     #Stablishes the connections makes or updates the database/connection
     client = MongoClient("mongodb://localhost:27017")
     db = client["library_database"]
@@ -106,6 +106,8 @@ def connect_to_mongo( dicdata):
     #inserts the data into mongo
     collection.insert_many(dicdata)
     client.close()
+    
+    
 def main():
     # goodreads for now
     mainURL = (
@@ -114,14 +116,12 @@ def main():
     #gets the dictionaries from the function
     scraped_books = scrape_books(mainURL)
 
-    # if dictionaries are returned it connects to mongo and uploads the data and prints it did so, otherwise it prints that it didnt
+    # if dictionaries are returned it connects to mongo and uploads the data and prints it did so, otherwise it prints that it didn't
     if scraped_books:
         connect_to_mongo(scraped_books)
         print("Data successfully inserted into MongoDB.")
     else:
         print("No data to insert into MongoDB.")
-
-    
 
 
 main()
